@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Profesor - Generador de Exámenes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        header h1 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #1e3c72;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .tab.active {
+            background: #1e3c72;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* SECCIÓN GENERAR EXAMEN */
+        .generar-examen {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .campo {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .campo label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.1rem;
+        }
+        
+        .campo select, .campo input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(30, 60, 114, 0.4);
+        }
+        
+        .codigo-generado {
+            background: #1e3c72;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            display: none;
+        }
+        
+        .codigo-generado pre {
+            background: #0a1a2f;
+            padding: 20px;
+            border-radius: 10px;
+            color: #00ff00;
+            font-family: monospace;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* SECCIÓN RESULTADOS */
+        .filtros {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filtros input, .filtros select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .estadisticas {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #1e3c72;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .badge-area {
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .area-matematicas { background: #1e3c72; }
+        .area-lectora { background: #28a745; }
+        .area-ciencias { background: #dc3545; }
+        .area-sociales { background: #ffc107; color: #333; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .detalle-pregunta {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #1e3c72;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chalkboard-teacher"></i> Panel del Profesor</h1>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="#" onclick="exportarTodo()"><i class="fas fa-file-excel"></i> Exportar</a>
+            </nav>
+        </header>
+        
+        <div class="main-content">
+            <div class="tabs">
+                <button class="tab active" onclick="mostrarTab('generar')">➕ Generar Nuevo Examen</button>
+                <button class="tab" onclick="mostrarTab('resultados')">📊 Resultados</button>
+                <button class="tab" onclick="mostrarTab('examenes')">📋 Exámenes Creados</button>
+            </div>
+            
+            <!-- TAB GENERAR EXAMEN -->
+            <div id="tab-generar" class="tab-content active">
+                <div class="generar-examen">
+                    <h2 style="color: #1e3c72; margin-bottom: 20px;"><i class="fas fa-plus-circle"></i> Solicitar Nuevo Examen</h2>
+                    <p style="margin-bottom: 30px; color: #666;">Completa los campos y el sistema generará el código HTML listo para copiar</p>
+                    
+                    <div class="grid-form">
+                        <div class="campo">
+                            <label><i class="fas fa-book"></i> Área de evaluación:</label>
+                            <select id="area">
+                                <option value="matematicas">🔢 Pensamiento Matemático</option>
+                                <option value="lectora">📖 Comprensión Lectora</option>
+                                <option value="ciencias">🔬 Ciencias Naturales</option>
+                                <option value="sociales">🌍 Ciencias Sociales</option>
+                            </select>
+                        </div>
+                        
+                        <div class="campo">
+                            <label><i class="fas fa-signal"></i> Nivel de dificultad:</label>
+                            <select id="dificultad">
+                                <option value="basico">🌱 Básico</option>
+                                <option value="intermedio" selected>📊 Intermedio</option>
+                                <option value="avanzado">🎯 Avanzado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="campo">
+                            <label><i class="fas fa-list-ol"></i> Número de preguntas:</label>
+                            <input type="number" id="num-preguntas" min="5" max="30" value="15">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" onclick="generarExamen()"><i class="fas fa-robot"></i> Generar Examen</button>
+                    
+                    <div id="codigo-generado" class="codigo-generado">
+                        <h3><i class="fas fa-check-circle"></i> ¡Examen generado!</h3>
+                        <p>Copia este código y pégalo en un nuevo archivo HTML:</p>
+                        <pre id="codigo-examen"></pre>
+                        <button class="btn" onclick="copiarCodigo()" style="background: #28a745;"><i class="fas fa-copy"></i> Copiar código</button>
+                    </div>
+                </div>
+                
+                <div style="background: #f0f8ff; padding: 25px; border-radius: 15px;">
+                    <h3 style="color: #1e3c72;">📝 Instrucciones:</h3>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Selecciona el área, nivel y número de preguntas</li>
+                        <li>Haz clic en "Generar Examen"</li>
+                        <li>Copia el código generado</li>
+                        <li>Crea un nuevo archivo .html y pega el código</li>
+                        <li>Súbelo a GitHub Pages junto con los demás</li>
+                        <li>Comparte el enlace con tus estudiantes</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- TAB RESULTADOS -->
+            <div id="tab-resultados" class="tab-content">
+                <div class="filtros">
+                    <input type="text" id="filtro-nombre" placeholder="Buscar por nombre">
+                    <select id="filtro-area">
+                        <option value="">Todas las áreas</option>
+                        <option value="matematicas">Matemáticas</option>
+                        <option value="lectora">Comprensión Lectora</option>
+                        <option value="ciencias">Ciencias</option>
+                        <option value="sociales">Sociales</option>
+                    </select>
+                    <select id="filtro-nivel">
+                        <option value="">Todos los niveles</option>
+                        <option value="basico">Básico</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="avanzado">Avanzado</option>
+                    </select>
+                    <button class="btn" onclick="aplicarFiltros()" style="padding: 12px 25px;">Filtrar</button>
+                </div>
+                
+                <div class="estadisticas" id="estadisticas">
+                    <!-- Se llena con JS -->
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Área</th>
+                            <th>Nivel</th>
+                            <th>Examen</th>
+                            <th>Fecha</th>
+                            <th>Calificación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-resultados"></tbody>
+                </table>
+            </div>
+            
+            <!-- TAB EXÁMENES CREADOS -->
+            <div id="tab-examenes" class="tab-content">
+                <div id="lista-examenes"></div>
+            </div>
+        </div>
+        
+        <!-- MODAL PARA DETALLE -->
+        <div class="modal" id="modal-detalle">
+            <div class="modal-content">
+                <h2 id="modal-titulo"></h2>
+                <div id="modal-contenido"></div>
+                <button class="btn" onclick="cerrarModal()" style="margin-top: 20px;">Cerrar</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Sistema de Exámenes Ceneval EXANI II - Panel del Profesor</p>
+        </footer>
+    </div>
+    
+    <script>
+        // BANCO DE PREGUNTAS
+        const bancoPreguntas = {
+            matematicas: {
+                basico: [
+                    { pregunta: "¿Cuál es el resultado de 15 + 7 × 2?", opciones: ["44", "29", "24", "39"], correcta: 1, explicacion: "Primero se multiplica: 7×2=14, luego 15+14=29" },
+                    { pregunta: "Si un rectángulo tiene base 8 cm y altura 5 cm, ¿cuál es su área?", opciones: ["13 cm²", "26 cm²", "40 cm²", "80 cm²"], correcta: 2, explicacion: "Área = base × altura = 8×5=40 cm²" }
+                ],
+                intermedio: [
+                    { pregunta: "Resuelve: 3(x + 4) = 2(x - 1)", opciones: ["x = -14", "x = 14", "x = -10", "x = 10"], correcta: 0, explicacion: "3x+12=2x-2 → 3x-2x=-2-12 → x=-14" },
+                    { pregunta: "Resuelve el sistema: { x + y = 10, x - y = 4 }", opciones: ["x=7, y=3", "x=6, y=4", "x=8, y=2", "x=5, y=5"], correcta: 0, explicacion: "Sumando: 2x=14 → x=7, sustituyendo: 7+y=10 → y=3" }
+                ],
+                avanzado: [
+                    { pregunta: "Resuelve: 2[3x - 4(x + 2)] = 5x - 10", opciones: ["x = 2", "x = -2", "x = 4", "x = -4"], correcta: 0, explicacion: "2[3x-4x-8]=5x-10 → 2[-x-8]=5x-10 → -2x-16=5x-10 → -7x=6 → x=-6/7" }
+                ]
+            },
+            lectora: {
+                basico: [
+                    { pregunta: "¿Cuál es el sujeto de 'Los estudiantes estudian en la biblioteca'?", opciones: ["estudian", "Los estudiantes", "biblioteca", "en la biblioteca"], correcta: 1, explicacion: "El sujeto es 'Los estudiantes'" },
+                    { pregunta: "Sinónimo de 'alegría'", opciones: ["tristeza", "felicidad", "enojo", "cansancio"], correcta: 1, explicacion: "Felicidad es sinónimo de alegría" }
+                ],
+                intermedio: [
+                    { pregunta: "Texto: 'El sol brillaba. María fue a la playa.' ¿Qué hizo María?", opciones: ["Fue al cine", "Fue a la playa", "Se quedó en casa", "Fue a la escuela"], correcta: 1, explicacion: "El texto dice que María fue a la playa" }
+                ],
+                avanzado: [
+                    { pregunta: "¿Idea principal? 'El calentamiento global es causado por gases de efecto invernadero que atrapan calor.'", opciones: ["Los gases son dañinos", "El calentamiento global y sus causas", "La atmósfera se calienta", "Efecto invernadero"], correcta: 1, explicacion: "El párrafo explica qué es y qué lo causa" }
+                ]
+            },
+            ciencias: {
+                basico: [
+                    { pregunta: "¿Planeta más cercano al Sol?", opciones: ["Venus", "Tierra", "Marte", "Mercurio"], correcta: 3, explicacion: "Mercurio es el más cercano" },
+                    { pregunta: "¿Célula sin núcleo?", opciones: ["Animal", "Vegetal", "Procariota", "Eucariota"], correcta: 2, explicacion: "Procariotas no tienen núcleo definido" }
+                ],
+                intermedio: [
+                    { pregunta: "¿Ley de Newton de acción y reacción?", opciones: ["1ra ley", "2da ley", "3ra ley", "4ta ley"], correcta: 2, explicacion: "La tercera ley es acción-reacción" }
+                ],
+                avanzado: [
+                    { pregunta: "Cruce Gg × Gg, ¿% crías blancas (gg)?", opciones: ["0%", "25%", "50%", "75%"], correcta: 1, explicacion: "Cuadro de Punnett: GG(25%), Gg(50%), gg(25%)" }
+                ]
+            },
+            sociales: {
+                basico: [
+                    { pregunta: "¿Año de la Revolución Mexicana?", opciones: ["1910", "1810", "1917", "1920"], correcta: 0, explicacion: "La Revolución Mexicana inició en 1910" },
+                    { pregunta: "¿Capital de México?", opciones: ["Guadalajara", "Monterrey", "CDMX", "Puebla"], correcta: 2, explicacion: "La Ciudad de México es la capital" }
+                ],
+                intermedio: [
+                    { pregunta: "¿Qué fue el Porfiriato?", opciones: ["Una guerra", "Periodo de Porfirio Díaz", "Una constitución", "Movimiento indígena"], correcta: 1, explicacion: "Periodo de gobierno de Porfirio Díaz" }
+                ],
+                avanzado: [
+                    { pregunta: "¿Causas de la Independencia de México?", opciones: ["Solo libertad", "Invasión napoleónica y desigualdad", "Problemas económicos", "Influencia de EU"], correcta: 1, explicacion: "Invasión napoleónica a España creó vacío de poder y desigualdad social" }
+                ]
+            }
+        };
+        
+        function mostrarTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (tab === 'generar') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('tab-generar').classList.add('active');
+            } else if (tab === 'resultados') {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('tab-resultados').classList.add('active');
+                cargarResultados();
+            } else {
+                document.querySelectorAll('.tab')[2].classList.add('active');
+                document.getElementById('tab-examenes').classList.add('active');
+                cargarExamenesCreados();
+            }
+        }
+        
+        function generarExamen() {
+            const area = document.getElementById('area').value;
+            const dificultad = document.getElementById('dificultad').value;
+            const numPreguntas = parseInt(document.getElementById('num-preguntas').value);
+            
+            const nombreArea = {
+                matematicas: 'Matemáticas',
+                lectora: 'Comprensión_Lectora',
+                ciencias: 'Ciencias_Naturales',
+                sociales: 'Ciencias_Sociales'
+            }[area];
+            
+            const nivel = {
+                basico: 'Basico',
+                intermedio: 'Intermedio',
+                avanzado: 'Avanzado'
+            }[dificultad];
+            
+            const preguntas = bancoPreguntas[area][dificultad];
+            const preguntasSeleccionadas = [];
+            
+            for (let i = 0; i < Math.min(numPreguntas, preguntas.length * 3); i++) {
+                const indice = i % preguntas.length;
+                preguntasSeleccionadas.push(preguntas[indice]);
+            }
+            
+            const codigoHTML = generarHTMLExamen(preguntasSeleccionadas, area, dificultad, nombreArea, nivel);
+            document.getElementById('codigo-examen').textContent = codigoHTML;
+            document.getElementById('codigo-generado').style.display = 'block';
+        }
+        
+        function generarHTMLExamen(preguntas, area, dificultad, nombreArea, nivel) {
+            let preguntasHTML = '';
+            let respuestasJS = '';
+            let explicacionesJS = '';
+            
+            preguntas.forEach((p, i) => {
+                preguntasHTML += `
+            &lt;!-- Pregunta ${i+1} --&gt;
+            &lt;div class="pregunta" id="p${i}"&gt;
+                &lt;h3&gt;${i+1}. ${p.pregunta}&lt;/h3&gt;
+                &lt;div class="opciones"&gt;`;
+                
+                p.opciones.forEach((opcion, j) => {
+                    preguntasHTML += `
+                    &lt;div class="opcion"&gt;
+                        &lt;input type="radio" name="q${i}" value="${j}" id="q${i}o${j}"&gt;
+                        &lt;label for="q${i}o${j}"&gt;${opcion}&lt;/label&gt;
+                    &lt;/div&gt;`;
+                });
+                
+                preguntasHTML += `
+                &lt;/div&gt;
+                &lt;div class="feedback" id="fb${i}"&gt;&lt;/div&gt;
+            &lt;/div&gt;`;
+                
+                respuestasJS += `            q${i}: ${p.correcta},\n`;
+                explicacionesJS += `            "${p.explicacion}",\n`;
+            });
+            
+            return `&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Examen ${nombreArea} - ${nivel}&lt;/title&gt;
+    &lt;style&gt;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #1e3c72, #2a5298); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; }
+        h1 { color: #1e3c72; text-align: center; margin-bottom: 20px; }
+        .pregunta { background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 10px; border-left: 5px solid #1e3c72; }
+        .opciones { margin: 15px 0; }
+        .opcion { padding: 12px; margin: 8px 0; background: white; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; }
+        .opcion:hover { border-color: #1e3c72; background: #e3f2fd; }
+        .btn { background: #1e3c72; color: white; padding: 15px 40px; border: none; border-radius: 50px; font-size: 1.2rem; cursor: pointer; width: 100%; }
+        .feedback { margin-top: 10px; padding: 10px; border-radius: 5px; display: none; }
+        .correcta { background: #d4edda; color: #155724; }
+        .incorrecta { background: #f8d7da; color: #721c24; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;📝 Examen ${nombreArea}&lt;/h1&gt;
+        &lt;p style="text-align: center; color: #1e3c72;"&gt;Nivel: ${nivel} - 15 preguntas&lt;/p&gt;
+        
+        &lt;div id="examen-container"&gt;
+${preguntasHTML}
+        &lt;/div&gt;
+        
+        &lt;button class="btn" onclick="calificarExamen()"&gt;Verificar respuestas&lt;/button&gt;
+        
+        &lt;div id="resultado" style="margin-top: 30px; padding: 20px; border-radius: 10px; display: none;"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;script&gt;
+        const respuestasCorrectas = {
+${respuestasJS}        };
+        
+        const explicaciones = [
+${explicacionesJS}        ];
+        
+        function calificarExamen() {
+            let correctas = 0;
+            for (let i = 0; i < ${preguntas.length}; i++) {
+                const seleccionada = document.querySelector(\`input[name="q\${i}"]:checked\`);
+                const feedback = document.getElementById(\`fb\${i}\`);
+                
+                if (seleccionada) {
+                    const valor = parseInt(seleccionada.value);
+                    if (valor === respuestasCorrectas[\`q\${i}\`]) {
+                        correctas++;
+                        feedback.innerHTML = '✅ Correcto';
+                        feedback.className = 'feedback correcta';
+                    } else {
+                        feedback.innerHTML = \`❌ \${explicaciones[i]}\`;
+                        feedback.className = 'feedback incorrecta';
+                    }
+                } else {
+                    feedback.innerHTML = \`⚠️ \${explicaciones[i]}\`;
+                    feedback.className = 'feedback incorrecta';
+                }
+                feedback.style.display = 'block';
+            }
+            
+            const porcentaje = (correctas / ${preguntas.length}) * 100;
+            const resultado = document.getElementById('resultado');
+            
+            const nombre = prompt('Ingresa tu nombre:');
+            if (nombre) {
+                const resultados = JSON.parse(localStorage.getItem('resultadosEstudiantes')) || [];
+                resultados.push({
+                    nombre: nombre,
+                    area: '${nombreArea}',
+                    nivel: '${nivel}',
+                    fecha: new Date().toLocaleString(),
+                    calificacion: porcentaje,
+                    correctas: correctas,
+                    total: ${preguntas.length}
+                });
+                localStorage.setItem('resultadosEstudiantes', JSON.stringify(resultados));
+            }
+            
+            resultado.style.display = 'block';
+            resultado.innerHTML = \`
+                &lt;h2 style="color: \${porcentaje >= 70 ? '#28a745' : '#dc3545'};"&gt;
+                    \${porcentaje >= 70 ? '✅ APROBADO' : '❌ REPROBADO'}
+                &lt;/h2&gt;
+                &lt;p style="font-size: 2rem; text-align: center;"&gt;\${porcentaje.toFixed(1)}%&lt;/p&gt;
+                &lt;p&gt;Correctas: \${correctas} de ${preguntas.length}&lt;/p&gt;
+            \`;
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;`;
+        }
+        
+        function copiarCodigo() {
+            const codigo = document.getElementById('codigo-examen');
+            const textarea = document.createElement('textarea');
+            textarea.value = codigo.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('✅ Código copiado');
+        }
+        
+        function cargarResultados() {
+            const resultados = JSON.parse(localStorage.getItem('resultadosEstudiantes')) || [];
+            mostrarTabla(resultados);
+            actualizarEstadisticas(resultados);
+        }
+        
+        function mostrarTabla(resultados) {
+            const tbody = document.getElementById('tabla-resultados');
+            
+            if (resultados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No hay resultados aún</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            resultados.forEach((r, i) => {
+                const colorCalif = r.calificacion >= 70 ? '#28a745' : '#dc3545';
+                html += `
+                    <tr>
+                        <td><strong>${r.nombre}</strong></td>
+                        <td><span class="badge-area area-${r.area || 'matematicas'}">${r.area || 'Matemáticas'}</span></td>
+                        <td>${r.nivel || 'Intermedio'}</td>
+                        <td>${r.fecha}</td>
+                        <td>${r.fecha}</td>
+                        <td style="color: ${colorCalif}; font-weight: bold;">${r.calificacion.toFixed(1)}%</td>
+                        <td><button onclick="verDetalle(${i})">Ver</button></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+        
+        function actualizarEstadisticas(resultados) {
+            const total = resultados.length;
+            const estudiantes = new Set(resultados.map(r => r.nombre)).size;
+            const promedio = resultados.reduce((s, r) => s + r.calificacion, 0) / total || 0;
+            const aprobados = resultados.filter(r => r.calificacion >= 70).length;
+            
+            document.getElementById('estadisticas').innerHTML = `
+                <div class="card"><h3>${total}</h3><p>Exámenes</p></div>
+                <div class="card"><h3>${estudiantes}</h3><p>Estudiantes</p></div>
+                <div class="card"><h3>${promedio.toFixed(1)}%</h3><p>Promedio</p></div>
+                <div class="card"><h3>${aprobados}</h3><p>Aprobados</p></div>
+            `;
+        }
+        
+        function aplicarFiltros() {
+            const nombre = document.getElementById('filtro-nombre').value.toLowerCase();
+            const area = document.getElementById('filtro-area').value;
+            const nivel = document.getElementById('filtro-nivel').value;
+            
+            let resultados = JSON.parse(localStorage.getItem('resultadosEstudiantes')) || [];
+            
+            if (nombre) resultados = resultados.filter(r => r.nombre.toLowerCase().includes(nombre));
+            if (area) resultados = resultados.filter(r => r.area === area);
+            if (nivel) resultados = resultados.filter(r => r.nivel === nivel);
+            
+            mostrarTabla(resultados);
+            actualizarEstadisticas(resultados);
+        }
+        
+        function exportarTodo() {
+            const resultados = JSON.parse(localStorage.getItem('resultadosEstudiantes')) || [];
+            let csv = 'Nombre,Área,Nivel,Fecha,Calificación,Correctas,Total\n';
+            resultados.forEach(r => {
+                csv += `"${r.nombre}",${r.area},${r.nivel},${r.fecha},${r.calificacion}%,${r.correctas},${r.total}\n`;
+            });
+            
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resultados_${new Date().toLocaleDateString()}.csv`;
+            a.click();
+        }
+        
+        function cargarExamenesCreados() {
+            const examenes = JSON.parse(localStorage.getItem('examenesCreados')) || [];
+            let html = '<div style="display: grid; gap: 20px;">';
+            
+            if (examenes.length === 0) {
+                html = '<p>No has generado exámenes aún. Ve a la pestaña "Generar" para crear tu primer examen.</p>';
+            } else {
+                examenes.forEach(e => {
+                    html += `
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #1e3c72;">
+                            <h3>${e.nombre}</h3>
+                            <p>Área: ${e.area} | Nivel: ${e.nivel} | Preguntas: ${e.preguntas}</p>
+                            <p>Creado: ${e.fecha}</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += '</div>';
+            document.getElementById('lista-examenes').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

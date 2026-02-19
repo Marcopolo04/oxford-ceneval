@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Exámenes Disponibles</title>
+    <style>
+        * { margin: 0; padding: 0; font-family: Arial; }
+        body { background: #f0f8ff; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #1e3c72; text-align: center; margin: 30px; }
+        .examen-card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; border-left: 5px solid #1e3c72; }
+        .btn { background: #1e3c72; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Exámenes Disponibles</h1>
+        <p>Selecciona un examen para comenzar:</p>
+        
+        <div id="lista">
+            <!-- Se llenará con JS -->
+        </div>
+    </div>
+    
+    <script>
+        const examenes = [
+            { nombre: "Matemáticas Básicas", archivo: "matematicas-basico.html" },
+            { nombre: "Trigonometría", archivo: "trigonometria.html" },
+            { nombre: "Comprensión Lectora", archivo: "lectora-intermedio.html" }
+        ];
+        
+        let html = '';
+        examenes.forEach(e => {
+            html += `
+                <div class="examen-card">
+                    <h3>${e.nombre}</h3>
+                    <button class="btn" onclick="location.href='${e.archivo}'">Comenzar</button>
+                </div>
+            `;
+        });
+        document.getElementById('lista').innerHTML = html;
+    </script>
+</body>
+</html>

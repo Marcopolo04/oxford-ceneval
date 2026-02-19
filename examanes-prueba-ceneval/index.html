@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Exámenes Ceneval EXANI II</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .hero h2 {
+            color: #1e3c72;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .roles {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin: 50px 0;
+            flex-wrap: wrap;
+        }
+        
+        .role-card {
+            background: #f8f9fa;
+            padding: 40px;
+            width: 400px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid;
+            transition: transform 0.3s;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .profesor {
+            border-color: #1e3c72;
+        }
+        
+        .profesor .icon {
+            color: #1e3c72;
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .role-card h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .role-card p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #1e3c72;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2a5298;
+            transform: scale(1.05);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 60px 0;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 25px;
+            background: #f0f8ff;
+            border-radius: 15px;
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            color: #666;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-graduation-cap"></i> Sistema de Exámenes Ceneval EXANI II</h1>
+            <p>Plataforma completa para profesores y estudiantes</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="hero">
+                <h2>¿Qué deseas hacer?</h2>
+                <p>Selecciona tu rol para continuar</p>
+            </div>
+            
+            <div class="roles">
+                <div class="role-card profesor">
+                    <div class="icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h2>Profesor</h2>
+                    <p>✓ Solicita exámenes personalizados<br>
+                       ✓ Elige área, nivel y número de preguntas<br>
+                       ✓ Consulta resultados de estudiantes<br>
+                       ✓ Genera nuevos exámenes</p>
+                    <a href="profesor.html" class="btn">Panel del Profesor</a>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>Generación con IA</h3>
+                    <p>Crea exámenes personalizados según tus necesidades</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Seguimiento</h3>
+                    <p>Consulta resultados detallados de cada estudiante</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-redo-alt"></i>
+                    <h3>Preguntas variables</h3>
+                    <p>Cada intento genera preguntas diferentes</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Sistema de Exámenes Ceneval EXANI II - Profesores y Estudiantes</p>
+        </footer>
+    </div>
+</body>
+</html>
